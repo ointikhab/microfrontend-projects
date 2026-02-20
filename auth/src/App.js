@@ -2,16 +2,16 @@ import React from "react";
 import { Router, Route, Switch } from "react-router-dom";
 import { StylesProvider } from "@material-ui/core";
 
-import Pricing from "./components/Pricing";
-import Landing from "./components/Landing";
+import Signup from "./components/Signup";
+import Signin from "./components/Signin";
 
 export default ({history}) => {
     return (
         <StylesProvider>
             <Router history={history}>
                 <Switch>
-                    <Route exact path="/pricing" component={Pricing} />
-                    <Route exact path="/" component={Landing} />
+                    <Route exact path="/auth/signup" component={Signup} />
+                    <Route exact path="/auth/signin" component={Signin} />
                 </Switch>
             </Router>
         </StylesProvider>
