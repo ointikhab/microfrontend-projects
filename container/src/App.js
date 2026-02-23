@@ -1,16 +1,44 @@
-import React from "react";
-import MarketingApp from "./components/MarketingApp";
+import React, {lazy, Suspense, useState} from "react";
 import Header from "./components/Header";
-import {BrowserRouter, Route, Switch} from "react-router-dom";
 
+const MarketingLazy = lazy(() => import("./components/MarketingApp"));
+const AuthLazy = lazy(() => import("./components/AuthApp"));
+const DashboardLazy = lazy(() => import("./components/DashboardApp"));
+
+import {Router, Route, Switch, Redirect} from "react-router-dom";
+import Progress from "./components/Progress";
+import  {createBrowserHistory} from 'history';
+import { useEffect } from "react";
+
+const history = createBrowserHistory();
 export default () => {
+    const [isSignedIn, setIsSignedIn] = useState(false);
+
+    useEffect(()=>{
+        if(isSignedIn){
+            history.push('/dashboard');
+        }
+    },[isSignedIn])
+
     return (
-    <BrowserRouter>    
+    <Router history={history}>    
     <div>
-      <Header/>
+      <Header isSignedIn={isSignedIn} onSignOut={() => setIsSignedIn(false)} />
       <hr/>
-        <MarketingApp />
+       <Suspense fallback={<Progress />}>
+        <Switch>
+            <Route  path="/auth">
+                <AuthLazy onSignIn={() => setIsSignedIn(true)} />
+            </Route>
+            <Route path="/dashboard">
+              {!isSignedIn && <Redirect to="/" />}
+              <DashboardLazy onSignIn={() => setIsSignedIn(true)} />
+            </Route>
+            <Route  path="/" component={MarketingLazy} />
+
+        </Switch>
+         </Suspense>
     </div>
-    </BrowserRouter>
+    </Router>
     )
 }

@@ -6,17 +6,21 @@ import {createMemoryHistory, createBrowserHistory} from 'history'
 
 // Mount the main App component to the DOM
 
-const mount = (el, {onNavigate, defaultHistory})=>{
-    const history = defaultHistory ||createMemoryHistory();
+const mount = (el, {onNavigate, defaultHistory, initialPath, onSignIn})=>{
+    const history = defaultHistory ||createMemoryHistory({
+        initialEntries: [initialPath]
+    });
     if(onNavigate){
      history.listen(onNavigate);
     }
     
-    ReactDOM.render(<App history={history} />, el)
+    ReactDOM.render(<App
+        onSignIn={onSignIn}
+        history={history} />, el)
 
     return {
         onParentNavigate({pathname: nextPathname}){
-            console.log('Container is navigating to ', nextPathname)
+            console.log('ATUHAPP:Container is navigating to ', nextPathname)
             const {pathname} = history.location;
             if(pathname !== nextPathname){
             history.push(nextPathname);
